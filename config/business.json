@@ -1,0 +1,37 @@
+{
+    "company_name": "Umiya Trading Company",
+
+    "tagline": "Quality You Can Trust. Relationships That Last.",
+
+    "phone": "7829585834",
+
+    "logo": "assets/logo.png",
+
+    "theme": {
+
+        "primary": "#2E2B2F",
+
+        "secondary": "#8A5A32",
+
+        "accent": "#C9A14A",
+
+        "background": "#F6F4F1"
+
+    },
+
+    "default_categories": [
+
+        "Educational",
+
+        "Product Showcase",
+
+        "Interior Inspiration",
+
+        "Buying Guide",
+
+        "Offers",
+
+        "Festival"
+
+    ]
+}
