@@ -1,93 +1,44 @@
-Create a premium social media poster.
 
-BUSINESS
+Create a premium festival greeting poster for {company_name}.
 
-Company:
-{company_name}
-
-Topic:
+TOPIC
 {topic}
 
-Category:
-Festival
-
-Business Type:
-Retail supplier of plywood, timber, laminates, doors and hardware.
-
-CREATIVE DIRECTION
-
-Style: elegant, vibrant, and richly festive, with a premium,
-royal feel appropriate to a high-end retail supplier of plywood,
-timber, laminates, doors and hardware.
-
-You may use either a photorealistic scene or a polished graphic /
-illustrated design (flat colors, ornamental line art, iconography)
-— whichever best suits a colorful, celebratory festival greeting.
-Favor rich, vibrant colors and elegant ornamental detail over a
-muted or purely photographic look.
-
-{style_spark}
-
-Feel free to experiment with different layouts — centered,
-top-to-bottom, symmetrical, or medallion-style arrangements —
-rather than always placing text on the left and imagery on the
-right.
-
-Beyond that, use your own creative judgment for lighting, mood,
-color palette, and composition. Vary your creative choices
-naturally from poster to poster rather than repeating the same
-layout every time.
+BUSINESS
+Retail supplier of plywood, timber, laminates, doors, and hardware.
 
 OBJECTIVE
 
-Wish and connect with customers first.
+Celebrate the festival first.
+Connect warmly with customers.
+Reflect the craftsmanship and home-building spirit of the business without making it feel like an advertisement.
 
-Tie the festive greeting naturally to the business (wood, doors, home, craftsmanship) without being overly salesy.
+CREATIVE DIRECTION
 
-The design should make the business look trustworthy, premium, and culturally warm.
+{style_spark}
 
-Festival mood and imagery should be the dominant visual focus of
-the poster. The decorations, colors, motifs, and symbolic elements
-shown must be authentic and specific to the exact festival named
-in the topic above.
+Use a vibrant, premium, and elegant look.
 
-Do not default to one festival's visual style for every occasion.
-For example: diyas, rangoli, and marigold garlands suit Diwali or
-Navratri; a modak and Ganesha idol suit Ganesh Chaturthi; a peacock
-feather and flute suit Janmashtami; lanterns and crescent-moon
-motifs suit Eid; ornaments, pine, and warm string lights suit
-Christmas; colored powders suit Holi. Let the specific festival in
-the topic determine which symbols, colors, and decorations
-actually appear — never mix elements from a different festival
-than the one named.
+Choose colors, symbols, and decorations that authentically belong to the festival named in the topic.
 
-You may optionally include a very small, unobtrusive text list of
-product categories or a single subtle icon — but feel free to
-leave it out entirely if it would distract from the festive
-design. Most posters should lean fully into the celebration with
-little to no product presence.
+Feel free to use either:
+- photorealistic artwork
+- illustrated graphic design
+
+Favor bright, festive colors over consistently dark luxury styling.
+
+Keep the composition clean, modern, and visually engaging.
 
 IMPORTANT
 
 Do NOT include:
+- Company logo
+- Company name
+- Phone number
+- Website
+- Footer
+- QR code
+- Social handles
+- Watermarks
 
-• Company logo
-• Company name
-• Phone number
-• Website
-• Footer
-• QR code
-• Social media handles
-• Watermarks
-
-A small logo and contact details will be added afterward in one
-corner of the image, and should not be part of your design.
-
-Try to keep at least one corner of the composition relatively
-uncluttered — not empty or artificial-looking, just naturally
-calmer than the rest of the scene — since that's where the brand
-mark will be placed. Beyond that, compose freely.
-
-Use high-quality, polished imagery — photorealistic or illustrated, whichever fits the chosen style.
-
-Avoid generic stock-photo festival clichés — aim for a design that feels custom-made and premium, not a template.
+Leave the top-left and bottom-right areas naturally less busy for branding that will be added later.
