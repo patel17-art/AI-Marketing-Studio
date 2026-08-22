@@ -1,4 +1,3 @@
-
 Create a premium festival greeting poster for {company_name}.
 
 TOPIC
@@ -21,13 +20,43 @@ Use a vibrant, premium, and elegant look.
 
 Choose colors, symbols, and decorations that authentically belong to the festival named in the topic.
 
-Feel free to use either:
-- photorealistic artwork
-- illustrated graphic design
+The medium is already specified above — follow it precisely rather
+than defaulting back to a generic illustrated or painterly look.
 
 Favor bright, festive colors over consistently dark luxury styling.
 
 Keep the composition clean, modern, and visually engaging.
+
+AVOID THE GENERIC "AI FESTIVAL POSTER" LOOK
+
+A huge number of businesses now generate festival posters with AI, and
+almost all of them converge on the exact same look: a hyper-glossy,
+symmetrical, front-facing gold idol/statue centered on a pedestal,
+surrounded by marigold garlands, floating diyas, and a soft glowing
+aura. Do not default to this. Specifically avoid:
+
+- A deity or idol shown as a glossy CGI-perfect statue, centered and
+  facing the camera dead-on
+- Walls or arches made entirely of marigold garlands
+- Diyas or brass items arranged in a perfectly symmetrical row
+- An artificial-looking soft golden glow/bloom around the subject
+- A composition that would be interchangeable with any other
+  business's festival poster if the logo were swapped out
+
+The goal is a poster that is unmistakably this brand's, not a
+template anyone could have generated.
+
+AVOID LOOKING "AI-GENERATED"
+
+Do not render this as a digital painting, concept art, or illustrated
+fantasy-art scene — visible brushwork, painterly blending, and
+dreamlike soft-focus detail are themselves an obvious tell of AI
+generation, not a way to avoid it. This should look like it was
+either photographed for real, or laid out by a professional graphic
+designer using clean, deliberate shapes — not painted by a machine.
+Keep faces, hands, and jewelry anatomically consistent and precise,
+not stylized or slightly melted the way generative art often renders
+fine detail.
 
 IMPORTANT
 

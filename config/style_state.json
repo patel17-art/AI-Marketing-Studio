@@ -1,4 +1,9 @@
 {
-    "festival": 1,
-    "educational": 2
+    "festival": 2,
+    "educational": 2,
+    "festival_medium": 0,
+    "festival_framing": 3,
+    "festival_signature": 2,
+    "educational_medium": 1,
+    "educational_framing": 1
 }
