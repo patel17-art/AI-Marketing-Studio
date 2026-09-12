@@ -8,24 +8,20 @@ from PIL import (
     ImageFont,
     ImageStat
 )
-
-# Assuming these are correctly set up in your environment
-# RESOURCE_DIR should point to the directory containing 'assets'
 from utils.paths import BASE_DIR, RESOURCE_DIR
 
 # --- Configuration ---
 PHONE_NUMBER = "7829585834"
 PRODUCTS_TEXT = "Plywood   |   Timber   |   Doors   |   Laminates   |   Hardware"
-WHATSAPP_GREEN = (37, 211, 102) # Standard WhatsApp Green
+WHATSAPP_GREEN = (37, 211, 102)  # Standard WhatsApp Green
 
 class FooterComposer:
 
     def __init__(self):
         # Paths to branding assets
         self.logo_path = (
-            RESOURCE_DIR / "assets" / "branding" / "logo_transparent_2.png"
+            RESOURCE_DIR / "assets" / "branding" / "3.png"
         )
-        # New path for the PNG icon
         self.whatsapp_icon_path = (
             RESOURCE_DIR / "assets" / "branding" / "WhatsApp.png"
         )
@@ -36,28 +32,13 @@ class FooterComposer:
 
     def _load_whatsapp_icon_png(self, size, target_color_tuple):
         """
-        Loads the WhatsApp PNG, resizes it, and optionally recolors it
-        to match the footer text if it's a monochrome icon.
+        Loads the WhatsApp PNG and resizes it.
         """
         if not self.whatsapp_icon_path.exists():
             raise FileNotFoundError(f"WhatsApp icon not found at: {self.whatsapp_icon_path}")
 
         icon = Image.open(self.whatsapp_icon_path).convert("RGBA")
         icon = icon.resize((size, size), Image.LANCZOS)
-
-        # Optional: If you downloaded a pure white icon and want to color it
-        # to match the ivory text, keep this block. If you downloaded a colored
-        # green icon, comment this block out.
-        # --- Recoloring Block ---
-        # r, g, b, a = icon.split()
-        # target_color = target_color_tuple[:3] # Ensure RGB
-        # icon = Image.merge("RGBA", (
-        #     Image.new("L", icon.size, target_color[0]),
-        #     Image.new("L", icon.size, target_color[1]),
-        #     Image.new("L", icon.size, target_color[2]),
-        #     a # Keep original alpha/transparency
-        # ))
-        # ------------------------
 
         return icon
 
@@ -66,150 +47,151 @@ class FooterComposer:
         if not image_path.exists():
             raise FileNotFoundError(image_path)
 
-        base_image = Image.open(image_path).convert("RGBA")
-        original_size = base_image.size
-        w, h = base_image.size
-        margin = int(w * 0.04)
+        source_image = Image.open(image_path).convert("RGBA")
+        w, original_h = source_image.size
+        margin = int(w * 0.055)
 
-        draw = ImageDraw.Draw(base_image)
+        # ----------------------------------------------------
+        # 1. FOOTER CANVAS EXTENSION
+        # ----------------------------------------------------
+        strip_height = max(100, int(original_h * 0.09))
+        h = original_h + strip_height
 
-        # ==========================================================
-        # LOGO (Top Left, existing code)
-        # ==========================================================
+        # Start with a rich dark slate/espresso base
+        base_image = Image.new("RGBA", (w, h), (14, 12, 11, 255))
+        base_image.paste(source_image, (0, 0))
+
+        # ----------------------------------------------------
+        # 2. LOGO (ORIGINAL COLORS, CLEAN)
+        # ----------------------------------------------------
         if self.logo_path.exists():
-            logo = Image.open(self.logo_path).convert("RGBA")
-            logo_width = int(w * 0.155)
-            logo_height = int(logo.height * (logo_width / logo.width))
-            logo = logo.resize((logo_width, logo_height), Image.LANCZOS)
-
-            panel_padding = int(w * 0.014)
-            panel_x = margin - panel_padding
-            panel_y = margin - panel_padding
-            panel_w = logo_width + panel_padding * 2
-            panel_h = logo_height + panel_padding * 2
-
-            logo_crop = base_image.crop((
-                max(0, panel_x), max(0, panel_y),
-                min(w, panel_x + panel_w), min(h, panel_y + panel_h)
-            ))
-            stat = ImageStat.Stat(logo_crop)
-            brightness = sum(stat.mean[:3]) / 3
-            variation = sum(stat.stddev[:3]) / 3
-
-            if brightness < 140 or variation > 35:
-                overlay = Image.new("RGBA", base_image.size, (0, 0, 0, 0))
-                overlay_draw = ImageDraw.Draw(overlay)
-                overlay_draw.rounded_rectangle(
-                    (panel_x, panel_y, panel_x + panel_w, panel_y + panel_h),
-                    radius=int(w * 0.016),
-                    fill=(248, 244, 236, 55)
-                )
-                base_image.alpha_composite(overlay)
-
+            original_logo = Image.open(self.logo_path).convert("RGBA")
+            logo_width = int(w * 0.16)
+            logo_height = int(original_logo.height * (logo_width / original_logo.width))
+            logo = original_logo.resize((logo_width, logo_height), Image.LANCZOS)
             base_image.alpha_composite(logo, (margin, margin))
 
-        # ==========================================================
-        # FOOTER STRIP & BRAND SIGNATURE
-        # ==========================================================
-        strip_height = int(h * 0.095)
-        strip_y = h - strip_height
+        # ----------------------------------------------------
+        # 3. FOOTER BAR: WARM ESPRESSO WITH BRASS HAIRLINE
+        # ----------------------------------------------------
+        strip_y = original_h
+        footer_overlay = Image.new("RGBA", (w, strip_height), (16, 13, 12, 255))
+        f_draw = ImageDraw.Draw(footer_overlay)
 
-        footer_sample = base_image.crop((0, strip_y, w, h))
-        footer_brightness = sum(ImageStat.Stat(footer_sample).mean[:3]) / 3
-
-        if footer_brightness < 140:
-            strip_fill = (18, 18, 18, 150)
-            footer_text_color = (245, 240, 228) # Warm Ivory
-            divider_color = (255, 255, 255, 100)
-        else:
-            strip_fill = (248, 244, 236, 175)
-            footer_text_color = (35, 25, 18) # Dark Brown
-            divider_color = (35, 25, 18, 90)
-
-        overlay = Image.new("RGBA", base_image.size, (0, 0, 0, 0))
-        overlay_draw = ImageDraw.Draw(overlay)
-        overlay_draw.rectangle((0, strip_y, w, h), fill=strip_fill)
-        overlay_draw.line(
-            (0, strip_y, w, strip_y),
-            fill=(196, 154, 78, 220), # Gold line
-            width=max(2, int(w * 0.002))
-        )
-        base_image.alpha_composite(overlay)
-
+        # Crisp, continuous warm gold hairline separator
+        f_draw.line([(0, 0), (w, 0)], fill=(200, 160, 90, 255), width=2)
+        base_image.paste(footer_overlay, (0, strip_y), footer_overlay)
         draw = ImageDraw.Draw(base_image)
 
-        # Load Fonts
-        font_path = "DejaVuSerif.ttf" # Ensure this font is available
-        try:
-            company_font = ImageFont.truetype(font_path, int(w * 0.023))
-            products_font = ImageFont.truetype(font_path, int(w * 0.016))
-            contact_font = ImageFont.truetype(font_path, int(w * 0.022))
-        except Exception:
-            company_font = products_font = contact_font = ImageFont.load_default()
+        # ----------------------------------------------------
+        # 4. FONTS & SIZING
+        # ----------------------------------------------------
+        title_font_size = max(16, int(strip_height * 0.22))
+        sub_font_size = max(11, int(strip_height * 0.13))
+        phone_font_size = max(18, int(strip_height * 0.24))
 
-        center_y = strip_y + strip_height // 2
+        def load_best(candidates, size):
+            for name in candidates:
+                try:
+                    return ImageFont.truetype(name, size)
+                except Exception:
+                    continue
+            return ImageFont.load_default()
 
-        # ---- Left side: company name + product list ----
-        company_text = "UMIYA TRADING COMPANY"
-        company_bbox = draw.textbbox((0, 0), company_text, font=company_font)
-        company_h = company_bbox[3] - company_bbox[1]
+        company_font = load_best(["georgiab.ttf", "timesbd.ttf", "arialbd.ttf"], title_font_size)
+        products_font = load_best(["segoeui.ttf", "arial.ttf", "DejaVuSans.ttf"], sub_font_size)
+        contact_font = load_best(["segoeuib.ttf", "arialbd.ttf", "DejaVuSans-Bold.ttf"], phone_font_size)
 
-        products_bbox = draw.textbbox((0, 0), PRODUCTS_TEXT, font=products_font)
-        products_h = products_bbox[3] - products_bbox[1]
+        center_y = strip_y + (strip_height // 2)
 
-        line_gap = int(h * 0.008)
-        block_h = company_h + line_gap + products_h
-        block_top = center_y - block_h // 2
-
-        draw.text((margin, block_top), company_text, font=company_font, fill=footer_text_color)
-        draw.text((margin, block_top + company_h + line_gap), PRODUCTS_TEXT, font=products_font, fill=footer_text_color)
-
-        # ---- Center Divider ----
-        divider_x = w // 2
-        draw.line(
-            (divider_x, strip_y + int(strip_height * 0.22), divider_x, h - int(strip_height * 0.22)),
-            fill=divider_color,
-            width=2
-        )
-
-        # ---- Right side: WhatsApp Icon (PNG) + Phone Number ----
+        # ----------------------------------------------------
+        # 5. RIGHT SECTION: CRISP WHATSAPP & PHONE
+        # ----------------------------------------------------
         phone_bbox = draw.textbbox((0, 0), PHONE_NUMBER, font=contact_font)
-        phone_h = phone_bbox[3] - phone_bbox[1]
         phone_w = phone_bbox[2] - phone_bbox[0]
+        phone_h = phone_bbox[3] - phone_bbox[1]
+        phone_offset_y = phone_bbox[1]
 
-        gap = int(w * 0.012)
-        icon_size = int(strip_height * 0.45) # Size of the icon
+        icon_size = int(strip_height * 0.40)
+        spacing = int(w * 0.014)
 
-        # 1. Load the actual PNG icon using the new method
-        whatsapp_icon = self._load_whatsapp_icon_png(icon_size, footer_text_color)
+        right_block_w = icon_size + spacing + phone_w
+        right_block_x = w - margin - right_block_w
 
-        icon_x = w - margin - phone_w - icon_size - gap
-        icon_y = center_y - icon_size // 2
+        # Keep original clean WhatsApp icon so the glyph stays intact
+        if self.whatsapp_icon_path.exists():
+            raw_icon = Image.open(self.whatsapp_icon_path).convert("RGBA")
+            raw_icon = raw_icon.resize((icon_size, icon_size), Image.LANCZOS)
+            icon_y = center_y - (icon_size // 2)
+            base_image.alpha_composite(raw_icon, (right_block_x, icon_y))
 
-        # 2. Paste the icon using alpha_composite
-        base_image.alpha_composite(whatsapp_icon, (icon_x, icon_y))
-
-        # 3. Draw the text (ensure draw object is fresh if recoloring was used)
-        draw = ImageDraw.Draw(base_image)
+        # Optical center alignment for the numbers
+        text_y = center_y - (phone_h // 2) - phone_offset_y
         draw.text(
-            (icon_x + icon_size + gap, center_y - phone_h // 2),
+            (right_block_x + icon_size + spacing, text_y),
             PHONE_NUMBER,
             font=contact_font,
-            fill=footer_text_color
+            fill=(255, 255, 255)
         )
 
-        # ==========================================================
-        # SAVE
-        # ==========================================================
+        # Subtle vertical separator line
+        sep_x = right_block_x - int(w * 0.035)
+        sep_h = int(strip_height * 0.40)
+        draw.line(
+            [(sep_x, center_y - sep_h // 2), (sep_x, center_y + sep_h // 2)],
+            fill=(80, 70, 65, 200),
+            width=1
+        )
+
+        # ----------------------------------------------------
+        # 6. LEFT SECTION: BRANDING & PRODUCTS
+        # ----------------------------------------------------
+        company_text = "UMIYA TRADING COMPANY"
+        comp_bbox = draw.textbbox((0, 0), company_text, font=company_font)
+        comp_h = comp_bbox[3] - comp_bbox[1]
+        comp_offset_y = comp_bbox[1]
+
+        prod_bbox = draw.textbbox((0, 0), PRODUCTS_TEXT, font=products_font)
+        prod_h = prod_bbox[3] - prod_bbox[1]
+        prod_offset_y = prod_bbox[1]
+
+        gap = int(strip_height * 0.10)
+        total_block_h = comp_h + gap + prod_h
+        block_top = center_y - (total_block_h // 2)
+
+        # Pure white, high-contrast company title
+        draw.text(
+            (margin, block_top - comp_offset_y),
+            company_text,
+            font=company_font,
+            fill=(255, 255, 255)
+        )
+
+        # Warm muted ivory for the product list
+        draw.text(
+            (margin, block_top + comp_h + gap - prod_offset_y),
+            PRODUCTS_TEXT,
+            font=products_font,
+            fill=(210, 200, 185)
+        )
+
+        # ----------------------------------------------------
+        # 7. SAVE OUTPUT (SANITIZED & SAFE FOR WINDOWS)
+        # ----------------------------------------------------
         final_image = base_image.convert("RGB")
-        if final_image.size != original_size:
-            raise RuntimeError("Image dimensions changed unexpectedly.")
+        self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        safe_topic = re.sub(r'[<>:"/\\\\|?*]', "", topic.strip().lower())
-        safe_topic = re.sub(r"\s+", "_", safe_topic).strip("._")
-        filename = f"Umiya_{date.today()}_{safe_topic or 'untitled'}_final.png"
-        output_path = self.output_dir / filename
+        # Strip all whitespace, newlines, and illegal Windows characters
+        clean_topic = str(topic).strip()
+        safe_topic = re.sub(r'[\r\n\t<>:"/\\|?*]+', '', clean_topic)
+        safe_topic = re.sub(r'\s+', '_', safe_topic).strip('._').lower()
+        if not safe_topic:
+            safe_topic = "poster"
 
-        final_image.save(output_path, "PNG")
+        filename = f"Umiya_{date.today()}_{safe_topic}_final.png"
+        output_path = (self.output_dir / filename).resolve()
+
+        # Save with explicit Path object
+        final_image.save(output_path, format="PNG")
         print(f"Final poster created: {output_path}")
         return str(output_path)

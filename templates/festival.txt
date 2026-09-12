@@ -58,8 +58,18 @@ Keep faces, hands, and jewelry anatomically consistent and precise,
 not stylized or slightly melted the way generative art often renders
 fine detail.
 
-IMPORTANT
+GREETING & TYPOGRAPHY LAYOUT (CRITICAL):
+Render an intentional, beautifully laid-out typographic greeting directly within the open negative space:
 
+1. PRIMARY HEADLINE:
+   "{topic}"
+   - Typographic Treatment: {typography_style}
+
+2. FESTIVE SUB-MESSAGE:
+   "{greeting_message}"
+   - Typographic Treatment: Small, refined secondary text positioned neatly below the headline with generous breathing room. Understated and crisp.
+
+IMPORTANT
 Do NOT include:
 - Company logo
 - Company name
@@ -70,4 +80,4 @@ Do NOT include:
 - Social handles
 - Watermarks
 
-Leave the top-left and bottom-right areas naturally less busy for branding that will be added later.
+Leave the top-left and bottom 10% areas naturally less busy for branding that will be added programmatically afterward.

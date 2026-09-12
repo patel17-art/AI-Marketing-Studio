@@ -69,6 +69,25 @@ EDUCATIONAL_FRAMING = [
     "Frame it as a tight, detail-focused crop rather than a wide establishing shot.",
 ]
 
+# TYPOGRAPHY: Controls the font aesthetic and lettering treatment
+# directly rendered in the open negative space.
+FESTIVAL_TYPOGRAPHY = [
+    "Render the greeting in bespoke modern calligraphy with elegant flourishes and liquid gold luster.",
+    "Render the greeting in a regal, high-contrast display serif with subtle ligatures and warm bronze foil finish.",
+    "Render the greeting in clean architectural debossed lettering cut into the wall plaster, catching diagonal sunlight.",
+    "Render the greeting in handcrafted vintage sign-painted serif typography with warm gold leaf leafing.",
+    "Render the greeting in minimalist luxury editorial lettering with wide tracking and refined gold foil edges.",
+]
+
+# FESTIVE MESSAGES: Rotating brand blessings that complement the topic
+# without sounding like an overt sales pitch.
+FESTIVAL_MESSAGES = [
+    "May new beginnings bring prosperity, strength, and timeless harmony to your home.",
+    "Crafting warm foundations and auspicious spaces for you and your family.",
+    "May divine blessings fill your home with strength, peace, and lasting beauty.",
+    "Celebrating the beauty of craftsmanship, heritage, and joyous new beginnings.",
+]
+
 
 class PromptEngine:
     def __init__(self, business):
@@ -96,6 +115,12 @@ class PromptEngine:
             signature = self.style_rotator.next_style(
                 "festival_signature", FESTIVAL_BRAND_SIGNATURE
             )
+            typography = self.style_rotator.next_style(
+                "festival_typography", FESTIVAL_TYPOGRAPHY
+            )
+            message = self.style_rotator.next_style(
+                "festival_message", FESTIVAL_MESSAGES
+            )
             style_spark = f"{medium} {framing} {signature}"
         else:
             medium = self.style_rotator.next_style(
@@ -105,6 +130,8 @@ class PromptEngine:
                 "educational_framing", EDUCATIONAL_FRAMING
             )
             style_spark = f"{medium} {framing}"
+            typography = "Clean, modern architectural sans-serif typography."
+            message = ""
 
         prompt = template
         prompt = prompt.replace(
@@ -115,6 +142,12 @@ class PromptEngine:
         )
         prompt = prompt.replace(
             "{style_spark}", style_spark
+        )
+        prompt = prompt.replace(
+            "{typography_style}", typography
+        )
+        prompt = prompt.replace(
+            "{greeting_message}", message
         )
 
         return prompt
