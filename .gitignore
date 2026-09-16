@@ -17,6 +17,9 @@ dist/
 generated/
 history/
 
+#Helping Files
+Helping Files/
+
 # Runtime logs
 app_log.txt
 
