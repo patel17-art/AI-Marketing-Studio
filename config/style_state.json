@@ -1,11 +1,13 @@
 {
     "festival": 2,
     "educational": 2,
-    "festival_medium": 0,
-    "festival_framing": 2,
+    "festival_medium": 3,
+    "festival_framing": 1,
     "festival_signature": 2,
-    "educational_medium": 3,
-    "educational_framing": 3,
-    "festival_typography": 2,
-    "festival_message": 2
+    "educational_medium": 2,
+    "educational_framing": 2,
+    "festival_typography": 1,
+    "festival_message": 2,
+    "educational_typography": 1,
+    "educational_template": 1
 }

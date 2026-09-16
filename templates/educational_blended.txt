@@ -1,0 +1,33 @@
+Create a high-end architectural editorial educational infographic poster for {company_name}.
+
+TOPIC:
+{topic}
+
+BUSINESS:
+Retail supplier of premium plywood, timber, laminates, doors, and hardware.
+
+AUDIENCE & PURPOSE:
+Target a homeowner or non-technical buyer. Explain "{topic}" clearly and simply, providing practical, high-value buying guidance without generic marketing buzzwords.
+
+VISUAL ENVIRONMENT:
+{style_spark}
+
+COMPOSITION & SCENE INTEGRATION:
+- Let the entire image form one cohesive, realistic photograph matching the environment described above.
+- Natural lighting and ambient shadows must flow continuously through the frame without artificial cutoff lines.
+- Product Details: Prominently feature realistic physical characteristics of "{topic}" (e.g. cross-section layers, cut edges, authentic surface finishes, grain, or hardware mechanisms).
+- Educational Information Area:
+  * Positioned in a clean, uncluttered portion of the scene.
+  * Headline: Authoritative, clear title derived from "{topic}".
+  * Content: 3 or 4 practical buying checks (such as recommended room usage, defects to watch for, or key specifications to ask for).
+  * Typography: {typography_style}
+- Brand Safe Zone: Keep the top-left corner (first 14% height, 28% width) completely empty for programmatic logo placement.
+- Footer Safe Zone: Keep the bottom 10% simple for the programmatic footer.
+
+IMPORTANT:
+Do NOT include:
+- Company logo
+- Company name
+- Phone number
+- Footer bar
+- Watermarks

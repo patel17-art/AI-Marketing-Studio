@@ -1,83 +1,38 @@
-Create a premium festival greeting poster for {company_name}.
+Create an authentic, culturally rich festival greeting poster for {company_name}.
 
-TOPIC
+FESTIVAL / OCCASION:
 {topic}
 
-BUSINESS
-Retail supplier of plywood, timber, laminates, doors, and hardware.
+BUSINESS IDENTITY:
+Supplier of fine architectural woodwork, teak, premium plywood, doors, and hardware.
 
-OBJECTIVE
-
-Celebrate the festival first.
-Connect warmly with customers.
-Reflect the craftsmanship and home-building spirit of the business without making it feel like an advertisement.
-
-CREATIVE DIRECTION
-
+CREATIVE DIRECTION:
 {style_spark}
 
-Use a vibrant, premium, and elegant look.
+CULTURAL RELEVANCE & SCENE ATMOSPHERE:
+- Analyze the festival "{topic}". Identify the exact cultural elements, colors, and symbols that belong to this celebration.
+- Authentically feature the traditional cultural elements, decorative symbols, and ceremonial items naturally associated with "{topic}". Do not invent generic decorations; adapt dynamically to the true spirit of this specific celebration.
+- Woodwork Integration: Naturally blend architectural elements suited to our timber, plywood, hardware, and door business into the environment, choosing whatever form complements the scene best.
+- Lighting: Lighting mood and atmosphere tailored naturally to "{topic}".
 
-Choose colors, symbols, and decorations that authentically belong to the festival named in the topic.
+AI DYNAMIC GREETING & BLESSING (UPPER CANVAS):
+Render a complete, celebratory typographic greeting in the upper area:
+1. Festive Title:
+   - Generate the customary cultural greeting for "{topic}" (e.g., "Happy {topic}", "Shubh {topic}", or the authentic greeting term for this occasion).
+   - Style: {typography_style}
+2. Dynamic Cultural Blessing (AI Composed):
+   - Compose an original, heartfelt 2-to-3 sentence blessing specifically tailored to the spirit of "{topic}".
+   - Subtly weave in themes of home, prosperity, strength, and joy.
+   - Render in clear, balanced, readable lettering centered below the title.
 
-The medium is already specified above — follow it precisely rather
-than defaulting back to a generic illustrated or painterly look.
+COMPOSITION & SAFE ZONES:
+- Top-Left Corner (first 14% height, 28% width) MUST REMAIN CLEAN AND EMPTY for the brand logo.
+- Bottom 10% must remain clean for the programmatic contact footer.
+- The overall poster must feel celebratory, rich, and visually complete.
 
-Favor bright, festive colors over consistently dark luxury styling.
-
-Keep the composition clean, modern, and visually engaging.
-
-AVOID THE GENERIC "AI FESTIVAL POSTER" LOOK
-
-A huge number of businesses now generate festival posters with AI, and
-almost all of them converge on the exact same look: a hyper-glossy,
-symmetrical, front-facing gold idol/statue centered on a pedestal,
-surrounded by marigold garlands, floating diyas, and a soft glowing
-aura. Do not default to this. Specifically avoid:
-
-- A deity or idol shown as a glossy CGI-perfect statue, centered and
-  facing the camera dead-on
-- Walls or arches made entirely of marigold garlands
-- Diyas or brass items arranged in a perfectly symmetrical row
-- An artificial-looking soft golden glow/bloom around the subject
-- A composition that would be interchangeable with any other
-  business's festival poster if the logo were swapped out
-
-The goal is a poster that is unmistakably this brand's, not a
-template anyone could have generated.
-
-AVOID LOOKING "AI-GENERATED"
-
-Do not render this as a digital painting, concept art, or illustrated
-fantasy-art scene — visible brushwork, painterly blending, and
-dreamlike soft-focus detail are themselves an obvious tell of AI
-generation, not a way to avoid it. This should look like it was
-either photographed for real, or laid out by a professional graphic
-designer using clean, deliberate shapes — not painted by a machine.
-Keep faces, hands, and jewelry anatomically consistent and precise,
-not stylized or slightly melted the way generative art often renders
-fine detail.
-
-GREETING & TYPOGRAPHY LAYOUT (CRITICAL):
-Render an intentional, beautifully laid-out typographic greeting directly within the open negative space:
-
-1. PRIMARY HEADLINE:
-   "{topic}"
-   - Typographic Treatment: {typography_style}
-
-2. FESTIVE SUB-MESSAGE:
-   "{greeting_message}"
-   - Typographic Treatment: Small, refined secondary text positioned neatly below the headline with generous breathing room. Understated and crisp.
-
-IMPORTANT
+IMPORTANT:
 Do NOT include:
 - Company logo
-- Company name
 - Phone number
-- Website
-- Footer
-- QR code
-- Social handles
+- Footer bar
 - Watermarks
-
-Leave the top-left and bottom 10% areas naturally less busy for branding that will be added programmatically afterward.

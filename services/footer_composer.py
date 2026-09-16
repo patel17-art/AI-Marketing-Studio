@@ -6,7 +6,7 @@ from PIL import (
     Image,
     ImageDraw,
     ImageFont,
-    ImageStat
+    ImageFilter
 )
 from utils.paths import BASE_DIR, RESOURCE_DIR
 
@@ -62,14 +62,39 @@ class FooterComposer:
         base_image.paste(source_image, (0, 0))
 
         # ----------------------------------------------------
-        # 2. LOGO (ORIGINAL COLORS, CLEAN)
+        # 2. BRAND LOGO: EXACT COLORS & CONTRAST (logo_transparent.png)
         # ----------------------------------------------------
-        if self.logo_path.exists():
-            original_logo = Image.open(self.logo_path).convert("RGBA")
-            logo_width = int(w * 0.16)
-            logo_height = int(original_logo.height * (logo_width / original_logo.width))
-            logo = original_logo.resize((logo_width, logo_height), Image.LANCZOS)
-            base_image.alpha_composite(logo, (margin, margin))
+        target_logo_path = (
+            RESOURCE_DIR / "assets" / "branding" / "logo_transparent.png"
+        )
+        if not target_logo_path.exists():
+            target_logo_path = self.logo_path
+
+        if target_logo_path and target_logo_path.exists():
+            logo = Image.open(target_logo_path).convert("RGBA")
+
+            # Scale logo to ~8.5% of canvas height (reduced from 11% to prevent text collision)
+            target_logo_h = int(h * 0.085)
+            target_logo_w = int(logo.width * (target_logo_h / logo.height))
+
+            logo = logo.resize(
+                (target_logo_w, target_logo_h), Image.Resampling.LANCZOS
+            )
+
+            # Standardized margin from top and left
+            logo_x = int(w * 0.055)
+            logo_y = int(h * 0.035)
+
+            # Optional: Subtle protective soft backdrop behind logo if background is busy
+            # (Ensures 100% legibility on light wood or white plaster)
+            backdrop = Image.new("RGBA", (target_logo_w + 30, target_logo_h + 30), (0, 0, 0, 0))
+            b_draw = ImageDraw.Draw(backdrop)
+            b_draw.rectangle([0, 0, backdrop.width, backdrop.height], fill=(255, 255, 255, 30))
+            backdrop = backdrop.filter(ImageFilter.GaussianBlur(15))
+            base_image.alpha_composite(backdrop, (logo_x - 15, logo_y - 15))
+
+            # Composite the clean logo
+            base_image.alpha_composite(logo, (logo_x, logo_y))
 
         # ----------------------------------------------------
         # 3. FOOTER BAR: WARM ESPRESSO WITH BRASS HAIRLINE
