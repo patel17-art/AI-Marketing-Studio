@@ -1,167 +1,184 @@
+from models.post_request import PostRequest
 from PySide6.QtWidgets import (
-    QWidget,
+    QComboBox,
     QLabel,
-    QVBoxLayout,
     QLineEdit,
     QPushButton,
-    QComboBox,
-    QTextEdit
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
-
-from models.post_request import PostRequest
 from services.marketing_service import MarketingService
 
 
 class MainWindow(QWidget):
 
-    def __init__(self):
+  def __init__(self):
 
-        super().__init__()
+    super().__init__()
 
-        self.setWindowTitle("AI Marketing Studio")
+    self.setWindowTitle("AI Marketing Studio")
 
-        self.resize(700, 500)
+    self.resize(700, 550)
 
-        self.marketing_service = MarketingService()
+    self.marketing_service = MarketingService()
 
-        layout = QVBoxLayout()
+    layout = QVBoxLayout()
 
-        title = QLabel("AI Marketing Studio")
+    title = QLabel("AI Marketing Studio")
 
-        business = QLabel("Business")
+    business = QLabel("Business")
 
-        business_name = QLabel("Umiya Trading Company")
+    business_name = QLabel("Umiya Trading Company")
 
-        post_type_label = QLabel("Post Type")
+    post_type_label = QLabel("Post Type")
 
-        self.post_type = QComboBox()
+    self.post_type = QComboBox()
 
-        self.post_type.addItems([
-            "Educational",
-            "Advertisement",
-            "Product Showcase",
-            "Comparison",
-            "Offer",
-            "Tips & Tricks",
-            "Festival",
-            "Customer Testimonial",
-            "Myth vs Fact"
-        ])
+    self.post_type.addItems([
+        "Educational",
+        "Advertisement",
+        "Product Showcase",
+        "Comparison",
+        "Offer",
+        "Tips & Tricks",
+        "Festival",
+        "Customer Testimonial",
+        "Myth vs Fact",
+    ])
 
-        topic = QLabel("Today's Topic")
+    # --- NEW: Educational Layout Dropdown ---
+    self.layout_label = QLabel("Educational Layout")
+    self.layout_combo = QComboBox()
+    self.layout_combo.addItems(
+        ["Split (Spec Sheet)", "Blended (Architectural Scene)"]
+    )
 
-        self.topic_input = QLineEdit()
+    # Connect dropdown visibility toggle
+    self.post_type.currentTextChanged.connect(self.on_post_type_changed)
 
-        self.topic_input.setPlaceholderText(
-            "Example: Why BWP plywood is best for kitchens"
-        )
+    topic = QLabel("Today's Topic")
 
-        generate = QPushButton("Generate Prompt")
+    self.topic_input = QLineEdit()
 
-        generate.clicked.connect(self.generate_post)
+    self.topic_input.setPlaceholderText(
+        "Example: Why BWP plywood is best for kitchens"
+    )
 
-        self.status = QLabel("Ready")
+    generate = QPushButton("Generate Prompt")
 
-        layout.addWidget(title)
-        layout.addSpacing(20)
+    generate.clicked.connect(self.generate_post)
 
-        layout.addWidget(business)
-        layout.addWidget(business_name)
+    self.status = QLabel("Ready")
 
-        layout.addSpacing(20)
+    layout.addWidget(title)
+    layout.addSpacing(15)
 
-        layout.addWidget(post_type_label)
-        layout.addWidget(self.post_type)
+    layout.addWidget(business)
+    layout.addWidget(business_name)
 
-        layout.addSpacing(20)
+    layout.addSpacing(15)
 
-        layout.addWidget(topic)
-        layout.addWidget(self.topic_input)
+    layout.addWidget(post_type_label)
+    layout.addWidget(self.post_type)
 
-        layout.addSpacing(20)
+    # Insert Educational Layout selector right below Post Type
+    layout.addWidget(self.layout_label)
+    layout.addWidget(self.layout_combo)
 
-        layout.addWidget(generate)
+    layout.addSpacing(15)
 
-        layout.addSpacing(20)
+    layout.addWidget(topic)
+    layout.addWidget(self.topic_input)
 
-        layout.addWidget(self.status)
+    layout.addSpacing(15)
 
-        self.setLayout(layout)
+    layout.addWidget(generate)
 
-        preview_label = QLabel("Generated Prompt")
+    layout.addSpacing(15)
 
-        self.prompt_preview = QTextEdit()
+    layout.addWidget(self.status)
 
-        self.prompt_preview.setReadOnly(True)
+    preview_label = QLabel("Generated Prompt")
 
-        self.prompt_preview.setPlaceholderText(
-            "Your generated prompt will appear here..."
-        )
+    self.prompt_preview = QTextEdit()
 
-        layout.addSpacing(20)
+    self.prompt_preview.setReadOnly(True)
 
-        layout.addWidget(preview_label)
+    self.prompt_preview.setPlaceholderText(
+        "Your generated prompt will appear here..."
+    )
 
-        layout.addWidget(self.prompt_preview)
+    layout.addSpacing(15)
 
-        copy_button = QPushButton("Copy Prompt")
-        
-        open_button = QPushButton("Open ChatGPT")
-        
-        save_button = QPushButton("Save Prompt")
-        
-        copy_button.clicked.connect(self.copy_prompt)
-        
-        open_button.clicked.connect(self.open_chatgpt)
-        
-        save_button.clicked.connect(self.save_prompt)
-        
-        layout.addWidget(copy_button)
-        layout.addWidget(open_button)
-        layout.addWidget(save_button)
+    layout.addWidget(preview_label)
 
-    def generate_post(self):
+    layout.addWidget(self.prompt_preview)
 
-        topic = self.topic_input.text().strip()
+    copy_button = QPushButton("Copy Prompt")
 
-        if not topic:
+    open_button = QPushButton("Open ChatGPT")
 
-            self.status.setText("Please enter today's topic.")
+    save_button = QPushButton("Save Prompt")
 
-            return
+    copy_button.clicked.connect(self.copy_prompt)
 
-        request = PostRequest(
-            topic=topic,
-            post_type=self.post_type.currentText(),
-            platform="Instagram"
-        )
+    open_button.clicked.connect(self.open_chatgpt)
 
-        prompt = self.marketing_service.generate(request)
+    save_button.clicked.connect(self.save_prompt)
 
-        self.prompt_preview.setPlainText(prompt)
+    layout.addWidget(copy_button)
+    layout.addWidget(open_button)
+    layout.addWidget(save_button)
 
-        
+    self.setLayout(layout)
 
-        self.status.setText(
-            "✅ Prompt copied to clipboard."
-        )
+    # Set initial visibility based on default selection
+    self.on_post_type_changed(self.post_type.currentText())
 
+  def on_post_type_changed(self, post_type: str):
+    is_educational = post_type.lower() == "educational"
+    self.layout_label.setVisible(is_educational)
+    self.layout_combo.setVisible(is_educational)
 
+  def generate_post(self):
 
-    def copy_prompt(self):
+    topic = self.topic_input.text().strip()
 
-        self.status.setText("Coming Soon")
+    if not topic:
+      self.status.setText("Please enter today's topic.")
+      return
 
+    selected_post_type = self.post_type.currentText()
 
-    def open_chatgpt(self):
+    # Map the UI text to the template filename
+    layout_choice = None
+    if selected_post_type.lower() == "educational":
+      layout_choice = (
+          "educational_split"
+          if "Split" in self.layout_combo.currentText()
+          else "educational_blended"
+      )
 
-        self.marketing_service.open_chatgpt()
+    request = PostRequest(
+        topic=topic,
+        post_type=selected_post_type,
+        platform="Instagram",
+        educational_layout=layout_choice,
+    )
 
-        self.status.setText(
-            "ChatGPT opened successfully."
-        )
+    final_image_path = self.marketing_service.generate(request)
 
+    self.prompt_preview.setPlainText(str(final_image_path))
 
-    def save_prompt(self):
+    self.status.setText("✅ Prompt copied to clipboard.")
 
-        self.status.setText("Coming Soon")
+  def copy_prompt(self):
+    self.status.setText("Coming Soon")
+
+  def open_chatgpt(self):
+    self.marketing_service.open_chatgpt()
+    self.status.setText("ChatGPT opened successfully.")
+
+  def save_prompt(self):
+    self.status.setText("Coming Soon")

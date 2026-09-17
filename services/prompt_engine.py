@@ -59,50 +59,53 @@ class PromptEngine:
     self.business = business
     self.style_rotator = StyleRotator()
 
-  def build_prompt(self, topic, category):
-    category = category.lower()
-    clean_topic = topic.strip().rstrip("?.!")
+  def build_prompt(self, topic, category, educational_layout=None):
+      category = category.lower()
+      clean_topic = topic.strip().rstrip("?.!")
 
-    if category == "festival":
-      template_name = "festival"
-      medium = self.style_rotator.next_style(
-          "festival_medium", FESTIVAL_MEDIUM
-      )
-      framing = self.style_rotator.next_style(
-          "festival_framing", FESTIVAL_FRAMING
-      )
-      signature = self.style_rotator.next_style(
-          "festival_signature", FESTIVAL_BRAND_SIGNATURE
-      )
-      typography = self.style_rotator.next_style(
-          "festival_typography", FESTIVAL_TYPOGRAPHY
-      )
-      style_spark = f"{medium} {framing} {signature}"
+      if category == "festival":
+        template_name = "festival"
+        medium = self.style_rotator.next_style(
+            "festival_medium", FESTIVAL_MEDIUM
+        )
+        framing = self.style_rotator.next_style(
+            "festival_framing", FESTIVAL_FRAMING
+        )
+        signature = self.style_rotator.next_style(
+            "festival_signature", FESTIVAL_BRAND_SIGNATURE
+        )
+        typography = self.style_rotator.next_style(
+            "festival_typography", FESTIVAL_TYPOGRAPHY
+        )
+        style_spark = f"{medium} {framing} {signature}"
 
-    else:
-      # Alternates between 'educational_split' and 'educational_blended' every time
-      template_name = self.style_rotator.next_style(
-          "educational_template", EDUCATIONAL_TEMPLATES
-      )
+      else:
+        # Use user choice from UI if provided, otherwise rotate
+        if educational_layout:
+          template_name = educational_layout
+        else:
+          template_name = self.style_rotator.next_style(
+              "educational_template", EDUCATIONAL_TEMPLATES
+          )
 
-      medium = self.style_rotator.next_style(
-          "educational_medium", EDUCATIONAL_MEDIUM
-      )
-      framing = self.style_rotator.next_style(
-          "educational_framing", EDUCATIONAL_FRAMING
-      )
-      typography = self.style_rotator.next_style(
-          "educational_typography", EDUCATIONAL_TYPOGRAPHY
-      )
-      style_spark = f"{medium} {framing}"
+        medium = self.style_rotator.next_style(
+            "educational_medium", EDUCATIONAL_MEDIUM
+        )
+        framing = self.style_rotator.next_style(
+            "educational_framing", EDUCATIONAL_FRAMING
+        )
+        typography = self.style_rotator.next_style(
+            "educational_typography", EDUCATIONAL_TYPOGRAPHY
+        )
+        style_spark = f"{medium} {framing}"
 
-    template_file = RESOURCE_DIR / "templates" / f"{template_name}.txt"
-    template = template_file.read_text(encoding="utf-8")
+      template_file = RESOURCE_DIR / "templates" / f"{template_name}.txt"
+      template = template_file.read_text(encoding="utf-8")
 
-    prompt = template
-    prompt = prompt.replace("{company_name}", self.business["company_name"])
-    prompt = prompt.replace("{topic}", clean_topic)
-    prompt = prompt.replace("{style_spark}", style_spark)
-    prompt = prompt.replace("{typography_style}", typography)
+      prompt = template
+      prompt = prompt.replace("{company_name}", self.business["company_name"])
+      prompt = prompt.replace("{topic}", clean_topic)
+      prompt = prompt.replace("{style_spark}", style_spark)
+      prompt = prompt.replace("{typography_style}", typography)
 
-    return prompt
+      return prompt

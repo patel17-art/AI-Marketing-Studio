@@ -26,7 +26,8 @@ class MarketingService:
 
         prompt = self.prompt_engine.build_prompt(
             request.topic,
-            request.post_type
+            request.post_type,
+            educational_layout=getattr(request, "educational_layout", None),
         )
 
         ClipboardService.copy(prompt)

@@ -1,222 +1,210 @@
-import re
-from pathlib import Path
 from datetime import date
-
-from PIL import (
-    Image,
-    ImageDraw,
-    ImageFont,
-    ImageFilter
-)
+from pathlib import Path
+import re
+from PIL import Image, ImageDraw, ImageFont
 from utils.paths import BASE_DIR, RESOURCE_DIR
 
-# --- Configuration ---
 PHONE_NUMBER = "7829585834"
-PRODUCTS_TEXT = "Plywood   |   Timber   |   Doors   |   Laminates   |   Hardware"
-WHATSAPP_GREEN = (37, 211, 102)  # Standard WhatsApp Green
+COMPANY_NAME = "UMIYA TRADING COMPANY"
+# Italian-inspired architectural material styling
+PRODUCTS_TEXT = "Plywood  ·  Timber  ·  Doors  ·  Laminates  ·  Hardware"
+
 
 class FooterComposer:
 
-    def __init__(self):
-        # Paths to branding assets
-        self.logo_path = (
-            RESOURCE_DIR / "assets" / "branding" / "3.png"
-        )
-        self.whatsapp_icon_path = (
-            RESOURCE_DIR / "assets" / "branding" / "WhatsApp.png"
-        )
+  def __init__(self):
+    self.branding_dir = RESOURCE_DIR / "assets" / "branding"
+    self.utc_logo_path = self.branding_dir / "utc_logo.png"
+    self.fallback_logo_path = self.branding_dir / "3.png"
+    self.whatsapp_icon_path = self.branding_dir / "WhatsApp.png"
 
-        # Output configuration
-        self.output_dir = BASE_DIR / "generated" / "final"
-        self.output_dir.mkdir(parents=True, exist_ok=True)
+    self.output_dir = BASE_DIR / "generated" / "final"
+    self.output_dir.mkdir(parents=True, exist_ok=True)
 
-    def _load_whatsapp_icon_png(self, size, target_color_tuple):
-        """
-        Loads the WhatsApp PNG and resizes it.
-        """
-        if not self.whatsapp_icon_path.exists():
-            raise FileNotFoundError(f"WhatsApp icon not found at: {self.whatsapp_icon_path}")
+  def _load_font(self, font_names, size):
+    for name in font_names:
+      try:
+        return ImageFont.truetype(name, size)
+      except Exception:
+        continue
+    return ImageFont.load_default()
 
-        icon = Image.open(self.whatsapp_icon_path).convert("RGBA")
-        icon = icon.resize((size, size), Image.LANCZOS)
+  def add_footer(self, image_path: Path | str, topic: str = "poster") -> Path:
+    image_path = Path(image_path)
+    if not image_path.exists():
+      raise FileNotFoundError(f"Image not found: {image_path}")
 
-        return icon
+    source_image = Image.open(image_path).convert("RGBA")
+    w, original_h = source_image.size
 
-    def add_footer(self, image_path, topic="poster"):
-        image_path = Path(image_path)
-        if not image_path.exists():
-            raise FileNotFoundError(image_path)
+    # 1. Canvas Setup
+    strip_height = max(130, int(original_h * 0.115))
+    h = original_h + strip_height
+    margin_x = int(w * 0.04)
 
-        source_image = Image.open(image_path).convert("RGBA")
-        w, original_h = source_image.size
-        margin = int(w * 0.055)
+    base_image = Image.new("RGBA", (w, h), (18, 15, 14, 255))
+    base_image.paste(source_image, (0, 0))
 
-        # ----------------------------------------------------
-        # 1. FOOTER CANVAS EXTENSION
-        # ----------------------------------------------------
-        strip_height = max(100, int(original_h * 0.09))
-        h = original_h + strip_height
+    strip_y = original_h
+    center_y = strip_y + (strip_height // 2)
 
-        # Start with a rich dark slate/espresso base
-        base_image = Image.new("RGBA", (w, h), (14, 12, 11, 255))
-        base_image.paste(source_image, (0, 0))
+    # 2. Base Tone Gradient & 1px Accent Hairline
+    footer_bar = Image.new("RGBA", (w, strip_height))
+    f_draw = ImageDraw.Draw(footer_bar)
+    for y in range(strip_height):
+      factor = y / float(strip_height)
+      r = int(24 * (1 - factor) + 14 * factor)
+      g = int(20 * (1 - factor) + 11 * factor)
+      b = int(18 * (1 - factor) + 10 * factor)
+      f_draw.line([(0, y), (w, y)], fill=(r, g, b, 255))
 
-        # ----------------------------------------------------
-        # 2. BRAND LOGO: EXACT COLORS & CONTRAST (logo_transparent.png)
-        # ----------------------------------------------------
-        target_logo_path = (
-            RESOURCE_DIR / "assets" / "branding" / "logo_transparent.png"
-        )
-        if not target_logo_path.exists():
-            target_logo_path = self.logo_path
+    # Clean champagne top border
+    f_draw.line([(0, 0), (w, 0)], fill=(215, 175, 110, 230), width=1)
+    base_image.paste(footer_bar, (0, strip_y))
 
-        if target_logo_path and target_logo_path.exists():
-            logo = Image.open(target_logo_path).convert("RGBA")
+    draw = ImageDraw.Draw(base_image)
 
-            # Scale logo to ~8.5% of canvas height (reduced from 11% to prevent text collision)
-            target_logo_h = int(h * 0.085)
-            target_logo_w = int(logo.width * (target_logo_h / logo.height))
+    # ----------------------------------------------------
+    # 3. RIGHT SECTION: CLEAN WHATSAPP + PHONE (NO PILL CAPSULE)
+    # ----------------------------------------------------
+    phone_font_size = max(13, int(strip_height * 0.16))
+    contact_font = self._load_font(
+        ["segoeuib.ttf", "arialbd.ttf", "DejaVuSans-Bold.ttf"], phone_font_size
+    )
 
-            logo = logo.resize(
-                (target_logo_w, target_logo_h), Image.Resampling.LANCZOS
-            )
+    phone_bbox = draw.textbbox((0, 0), PHONE_NUMBER, font=contact_font)
+    phone_w = phone_bbox[2] - phone_bbox[0]
+    phone_h = phone_bbox[3] - phone_bbox[1]
 
-            # Standardized margin from top and left
-            logo_x = int(w * 0.055)
-            logo_y = int(h * 0.035)
+    icon_size = max(18, int(strip_height * 0.24))
+    gap_icon_text = int(w * 0.010)
 
-            # Optional: Subtle protective soft backdrop behind logo if background is busy
-            # (Ensures 100% legibility on light wood or white plaster)
-            backdrop = Image.new("RGBA", (target_logo_w + 30, target_logo_h + 30), (0, 0, 0, 0))
-            b_draw = ImageDraw.Draw(backdrop)
-            b_draw.rectangle([0, 0, backdrop.width, backdrop.height], fill=(255, 255, 255, 30))
-            backdrop = backdrop.filter(ImageFilter.GaussianBlur(15))
-            base_image.alpha_composite(backdrop, (logo_x - 15, logo_y - 15))
+    right_content_w = icon_size + gap_icon_text + phone_w
+    right_x = w - margin_x - right_content_w
 
-            # Composite the clean logo
-            base_image.alpha_composite(logo, (logo_x, logo_y))
+    if self.whatsapp_icon_path.exists():
+      raw_icon = (
+          Image.open(self.whatsapp_icon_path)
+          .convert("RGBA")
+          .resize((icon_size, icon_size), Image.Resampling.LANCZOS)
+      )
+      base_image.alpha_composite(
+          raw_icon, (right_x, center_y - (icon_size // 2))
+      )
 
-        # ----------------------------------------------------
-        # 3. FOOTER BAR: WARM ESPRESSO WITH BRASS HAIRLINE
-        # ----------------------------------------------------
-        strip_y = original_h
-        footer_overlay = Image.new("RGBA", (w, strip_height), (16, 13, 12, 255))
-        f_draw = ImageDraw.Draw(footer_overlay)
+    draw.text(
+        (
+            right_x + icon_size + gap_icon_text,
+            center_y - (phone_h // 2) - phone_bbox[1],
+        ),
+        PHONE_NUMBER,
+        font=contact_font,
+        fill=(255, 255, 255),
+    )
 
-        # Crisp, continuous warm gold hairline separator
-        f_draw.line([(0, 0), (w, 0)], fill=(200, 160, 90, 255), width=2)
-        base_image.paste(footer_overlay, (0, strip_y), footer_overlay)
-        draw = ImageDraw.Draw(base_image)
+    # Architectural vertical partition divider
+    sep_right_x = right_x - int(w * 0.028)
+    div_h = int(strip_height * 0.44)
+    draw.line(
+        [
+            (sep_right_x, center_y - div_h // 2),
+            (sep_right_x, center_y + div_h // 2),
+        ],
+        fill=(190, 160, 120, 130),
+        width=1,
+    )
 
-        # ----------------------------------------------------
-        # 4. FONTS & SIZING
-        # ----------------------------------------------------
-        title_font_size = max(16, int(strip_height * 0.22))
-        sub_font_size = max(11, int(strip_height * 0.13))
-        phone_font_size = max(18, int(strip_height * 0.24))
+    # ----------------------------------------------------
+    # 4. LEFT SECTION: LOGO
+    # ----------------------------------------------------
+    curr_x = margin_x
+    logo_file = (
+        self.utc_logo_path
+        if self.utc_logo_path.exists()
+        else self.fallback_logo_path
+    )
 
-        def load_best(candidates, size):
-            for name in candidates:
-                try:
-                    return ImageFont.truetype(name, size)
-                except Exception:
-                    continue
-            return ImageFont.load_default()
+    if logo_file.exists():
+      emblem = Image.open(logo_file).convert("RGBA")
+      target_h = int(strip_height * 0.72)
+      target_w = int(emblem.width * (target_h / emblem.height))
+      emblem = emblem.resize((target_w, target_h), Image.Resampling.LANCZOS)
+      base_image.alpha_composite(
+          emblem, (curr_x, center_y - (target_h // 2))
+      )
+      curr_x += target_w + int(w * 0.022)
 
-        company_font = load_best(["georgiab.ttf", "timesbd.ttf", "arialbd.ttf"], title_font_size)
-        products_font = load_best(["segoeui.ttf", "arial.ttf", "DejaVuSans.ttf"], sub_font_size)
-        contact_font = load_best(["segoeuib.ttf", "arialbd.ttf", "DejaVuSans-Bold.ttf"], phone_font_size)
+    # ----------------------------------------------------
+    # 5. MIDDLE SECTION: ELEGANT SERIF & ITALIC FORMAT
+    # ----------------------------------------------------
+    max_text_w = sep_right_x - curr_x - int(w * 0.03)
 
-        center_y = strip_y + (strip_height // 2)
+    # Company name font (Classic luxury serif)
+    company_font_size = max(14, int(strip_height * 0.19))
+    company_font = self._load_font(
+        ["georgiab.ttf", "timesbd.ttf", "arialbd.ttf"], company_font_size
+    )
 
-        # ----------------------------------------------------
-        # 5. RIGHT SECTION: CRISP WHATSAPP & PHONE
-        # ----------------------------------------------------
-        phone_bbox = draw.textbbox((0, 0), PHONE_NUMBER, font=contact_font)
-        phone_w = phone_bbox[2] - phone_bbox[0]
-        phone_h = phone_bbox[3] - phone_bbox[1]
-        phone_offset_y = phone_bbox[1]
+    while company_font_size > 11:
+      c_bbox = draw.textbbox((0, 0), COMPANY_NAME, font=company_font)
+      if (c_bbox[2] - c_bbox[0]) <= max_text_w:
+        break
+      company_font_size -= 1
+      company_font = self._load_font(
+          ["georgiab.ttf", "timesbd.ttf", "arialbd.ttf"], company_font_size
+      )
 
-        icon_size = int(strip_height * 0.40)
-        spacing = int(w * 0.014)
+    # Italian-style editorial italic font for the products subtext
+    products_font_size = max(11, int(strip_height * 0.13))
+    products_font = self._load_font(
+        ["georgiai.ttf", "timesi.ttf", "cambriai.ttf", "segoeuii.ttf"],
+        products_font_size,
+    )
 
-        right_block_w = icon_size + spacing + phone_w
-        right_block_x = w - margin - right_block_w
+    display_products = PRODUCTS_TEXT
+    while products_font_size > 8:
+      p_bbox = draw.textbbox((0, 0), display_products, font=products_font)
+      if (p_bbox[2] - p_bbox[0]) <= max_text_w:
+        break
+      if "  ·  " in display_products:
+        display_products = display_products.replace("  ·  ", " · ")
+      products_font_size -= 1
+      products_font = self._load_font(
+          ["georgiai.ttf", "timesi.ttf", "cambriai.ttf", "segoeuii.ttf"],
+          products_font_size,
+      )
 
-        # Keep original clean WhatsApp icon so the glyph stays intact
-        if self.whatsapp_icon_path.exists():
-            raw_icon = Image.open(self.whatsapp_icon_path).convert("RGBA")
-            raw_icon = raw_icon.resize((icon_size, icon_size), Image.LANCZOS)
-            icon_y = center_y - (icon_size // 2)
-            base_image.alpha_composite(raw_icon, (right_block_x, icon_y))
+    comp_bbox = draw.textbbox((0, 0), COMPANY_NAME, font=company_font)
+    comp_h = comp_bbox[3] - comp_bbox[1]
 
-        # Optical center alignment for the numbers
-        text_y = center_y - (phone_h // 2) - phone_offset_y
-        draw.text(
-            (right_block_x + icon_size + spacing, text_y),
-            PHONE_NUMBER,
-            font=contact_font,
-            fill=(255, 255, 255)
-        )
+    prod_bbox = draw.textbbox((0, 0), display_products, font=products_font)
+    prod_h = prod_bbox[3] - prod_bbox[1]
 
-        # Subtle vertical separator line
-        sep_x = right_block_x - int(w * 0.035)
-        sep_h = int(strip_height * 0.40)
-        draw.line(
-            [(sep_x, center_y - sep_h // 2), (sep_x, center_y + sep_h // 2)],
-            fill=(80, 70, 65, 200),
-            width=1
-        )
+    spacing = int(strip_height * 0.055)
+    total_h = comp_h + spacing + prod_h
+    start_y = center_y - (total_h // 2)
 
-        # ----------------------------------------------------
-        # 6. LEFT SECTION: BRANDING & PRODUCTS
-        # ----------------------------------------------------
-        company_text = "UMIYA TRADING COMPANY"
-        comp_bbox = draw.textbbox((0, 0), company_text, font=company_font)
-        comp_h = comp_bbox[3] - comp_bbox[1]
-        comp_offset_y = comp_bbox[1]
+    # Company title in warm champagne gold
+    draw.text(
+        (curr_x, start_y - comp_bbox[1]),
+        COMPANY_NAME,
+        font=company_font,
+        fill=(245, 230, 205),
+    )
 
-        prod_bbox = draw.textbbox((0, 0), PRODUCTS_TEXT, font=products_font)
-        prod_h = prod_bbox[3] - prod_bbox[1]
-        prod_offset_y = prod_bbox[1]
+    # Subtext in warm Italian-style italic serifs
+    draw.text(
+        (curr_x, start_y + comp_h + spacing - prod_bbox[1]),
+        display_products,
+        font=products_font,
+        fill=(218, 205, 185),
+    )
 
-        gap = int(strip_height * 0.10)
-        total_block_h = comp_h + gap + prod_h
-        block_top = center_y - (total_block_h // 2)
+    # 6. Save Output
+    safe_topic = re.sub(r'[\r\n\t<>:"/\\|?*]+', "", str(topic).strip())
+    safe_topic = re.sub(r"\s+", "_", safe_topic).strip("._").lower() or "poster"
+    filename = f"Umiya_{date.today()}_{safe_topic}_final.png"
+    output_path = self.output_dir / filename
 
-        # Pure white, high-contrast company title
-        draw.text(
-            (margin, block_top - comp_offset_y),
-            company_text,
-            font=company_font,
-            fill=(255, 255, 255)
-        )
-
-        # Warm muted ivory for the product list
-        draw.text(
-            (margin, block_top + comp_h + gap - prod_offset_y),
-            PRODUCTS_TEXT,
-            font=products_font,
-            fill=(210, 200, 185)
-        )
-
-        # ----------------------------------------------------
-        # 7. SAVE OUTPUT (SANITIZED & SAFE FOR WINDOWS)
-        # ----------------------------------------------------
-        final_image = base_image.convert("RGB")
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-
-        # Strip all whitespace, newlines, and illegal Windows characters
-        clean_topic = str(topic).strip()
-        safe_topic = re.sub(r'[\r\n\t<>:"/\\|?*]+', '', clean_topic)
-        safe_topic = re.sub(r'\s+', '_', safe_topic).strip('._').lower()
-        if not safe_topic:
-            safe_topic = "poster"
-
-        filename = f"Umiya_{date.today()}_{safe_topic}_final.png"
-        output_path = (self.output_dir / filename).resolve()
-
-        # Save with explicit Path object
-        final_image.save(output_path, format="PNG")
-        print(f"Final poster created: {output_path}")
-        return str(output_path)
+    base_image.convert("RGB").save(output_path, "PNG", quality=95)
+    return output_path

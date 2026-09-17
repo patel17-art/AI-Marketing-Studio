@@ -4,10 +4,10 @@
     "festival_medium": 3,
     "festival_framing": 1,
     "festival_signature": 2,
-    "educational_medium": 2,
-    "educational_framing": 2,
+    "educational_medium": 1,
+    "educational_framing": 0,
     "festival_typography": 1,
     "festival_message": 2,
-    "educational_typography": 1,
+    "educational_typography": 2,
     "educational_template": 1
 }
